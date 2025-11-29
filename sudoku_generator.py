@@ -298,15 +298,15 @@ class Board:
                             self.original_cell_values[row_index][column_index])
                         self.cells[row_index][column_index].set_sketched_value(0)
 
-        def is_full(self):
+    def is_full(self):
         # Returns a Boolean value indicating whether the board is full or not.
 
-        def update_board(self):
+    def update_board(self):
 
         # Updates the underlying 2D board with the values in all cells.
         # meant to update the board with the values that are entered (not sketched)?
 
-        def find_empty(self):
+    def find_empty(self):
             # Finds an empty cell and returns its row and col as a tuple(x, y).
             # do I need to continuously find empty cells
             for x in range(0, self.row_length):
@@ -314,7 +314,7 @@ class Board:
                     if self.board[x][y] == 0:
                         return (x, y)  # returning if a tuple
 
-        def check_board(self):
+    def check_board(self):
     # Check whether the Sudoku board is solved correctly.
 
 #Cell (Recommended)
