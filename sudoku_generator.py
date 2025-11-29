@@ -300,22 +300,30 @@ class Board:
 
     def is_full(self):
         # Returns a Boolean value indicating whether the board is full or not.
+        #true = board is full, false = board is not full
+        for x in range(0, self.row_length):
+            for y in range(0, self.row_length):
+                if self.board[x][y] == 0:
+                    return False
+
 
     def update_board(self):
 
         # Updates the underlying 2D board with the values in all cells.
         # meant to update the board with the values that are entered (not sketched)?
+        #used when user presses enter button, to make a cell hold the number
+
 
     def find_empty(self):
             # Finds an empty cell and returns its row and col as a tuple(x, y).
             # do I need to continuously find empty cells
-            for x in range(0, self.row_length):
-                for y in range(0, self.row_length):
-                    if self.board[x][y] == 0:
-                        return (x, y)  # returning if a tuple
+        for x in range(0, self.row_length):
+            for y in range(0, self.row_length):
+                if self.board[x][y] == 0:
+                    return (x, y)  # returning if a tuple
 
     def check_board(self):
-    # Check whether the Sudoku board is solved correctly.
+    #Check whether the Sudoku board is solved correctly.
 
 #Cell (Recommended)
 #This class represents a single cell in the Sudoku board. There are 81 Cells in a Board.
