@@ -7,133 +7,62 @@ https://www.geeksforgeeks.org/program-sudoku-generator/
 
 """
 
-class SudokuGenerator:
-    '''
-	create a sudoku board - initialize class variables and set up the 2D board
-	This should initialize:
-	self.row_length		- the length of each row
-	self.removed_cells	- the total number of cells to be removed
-	self.board			- a 2D list of ints to represent the board
-	self.box_length		- the square root of row_length
-
-	Parameters:
-    row_length is the number of rows/columns of the board (always 9 for this project)
-    removed_cells is an integer value - the number of cells to be removed
-
-	Return:
-	None
-    '''
-    def __init__(self, row_length, removed_cells):
-        pass
-
-    '''
-	Returns a 2D python list of numbers which represents the board
-
-	Parameters: None
-	Return: list[list]
-    '''
+class SudokuGenerator():
+    def __init__(self, row_length=9, removed_cells=0):
+        self.row_length=row_length
+        self.removed_cells=removed_cells
+        self.board = []
+        for i in range(row_length):
+            row = []
+            for j in range(row_length):
+                row.append(0)
+            self.board.append(row)
+        self.box_length = 3
     def get_board(self):
-        pass
-
-    '''
-	Displays the board to the console
-    This is not strictly required, but it may be useful for debugging purposes
-
-	Parameters: None
-	Return: None
-    '''
+        return self.board
     def print_board(self):
-        pass
+        for row in self.board:
+            print(row)
 
-    '''
-	Determines if num is contained in the specified row (horizontal) of the board
-    If num is already in the specified row, return False. Otherwise, return True
-
-	Parameters:
-	row is the index of the row we are checking
-	num is the value we are looking for in the row
-	
-	Return: boolean
-    '''
     def valid_in_row(self, row, num):
-        pass
-
-    '''
-	Determines if num is contained in the specified column (vertical) of the board
-    If num is already in the specified col, return False. Otherwise, return True
-
-	Parameters:
-	col is the index of the column we are checking
-	num is the value we are looking for in the column
-	
-	Return: boolean
-    '''
+        if num in self.board[row]:
+            return False
+        else:
+            return True
     def valid_in_col(self, col, num):
-        pass
-
-    '''
-	Determines if num is contained in the 3x3 box specified on the board
-    If num is in the specified box starting at (row_start, col_start), return False.
-    Otherwise, return True
-
-	Parameters:
-	row_start and col_start are the starting indices of the box to check
-	i.e. the box is from (row_start, col_start) to (row_start+2, col_start+2)
-	num is the value we are looking for in the box
-
-	Return: boolean
-    '''
+        for row in range(self.row_length):
+            if self.board[row][col] == num:
+                return False
+        return True
     def valid_in_box(self, row_start, col_start, num):
-        pass
-    
-    '''
-    Determines if it is valid to enter num at (row, col) in the board
-    This is done by checking that num is unused in the appropriate, row, column, and box
+        for row in range(row_start,row_start+3):
+            for col in range(col_start,col_start+3):
+                if self.board[row][col]==num:
+                    return False
+        return True
 
-	Parameters:
-	row and col are the row index and col index of the cell to check in the board
-	num is the value to test if it is safe to enter in this cell
-
-	Return: boolean
-    '''
     def is_valid(self, row, col, num):
-        pass
+        box_row_beg = (row//3) * 3
+        box_col_beg = (col// 3) * 3
 
-    '''
-    Fills the specified 3x3 box with values
-    For each position, generates a random digit which has not yet been used in the box
+        return (self.valid_in_row(row, num) and
+                self.valid_in_col(col, num) and
+                self.valid_in_box(box_row_beg, box_col_beg, num))
 
-	Parameters:
-	row_start and col_start are the starting indices of the box to check
-	i.e. the box is from (row_start, col_start) to (row_start+2, col_start+2)
-
-	Return: None
-    '''
     def fill_box(self, row_start, col_start):
-        pass
-    
-    '''
-    Fills the three boxes along the main diagonal of the board
-    These are the boxes which start at (0,0), (3,3), and (6,6)
+        nums = list(range(1, 10))
+        random.shuffle(nums)
 
-	Parameters: None
-	Return: None
-    '''
+        num_index = 0
+        for i in range(row_start, row_start + 3):
+            for j in range(col_start, col_start + 3):
+                self.board[i][j] = nums[num_index]
+                num_index += 1
+
     def fill_diagonal(self):
-        pass
+        for i in range(0, self.row_length, 3):
+            self.fill_box(i, i)
 
-    '''
-    DO NOT CHANGE
-    Provided for students
-    Fills the remaining cells of the board
-    Should be called after the diagonal boxes have been filled
-	
-	Parameters:
-	row, col specify the coordinates of the first empty (0) cell
-
-	Return:
-	boolean (whether or not we could solve the board)
-    '''
     def fill_remaining(self, row, col):
         if (col >= self.row_length and row < self.row_length - 1):
             row += 1
@@ -152,7 +81,7 @@ class SudokuGenerator:
                 col = 0
                 if row >= self.row_length:
                     return True
-        
+
         for num in range(1, self.row_length + 1):
             if self.is_valid(row, col, num):
                 self.board[row][col] = num
@@ -161,48 +90,20 @@ class SudokuGenerator:
                 self.board[row][col] = 0
         return False
 
-    '''
-    DO NOT CHANGE
-    Provided for students
-    Constructs a solution by calling fill_diagonal and fill_remaining
 
-	Parameters: None
-	Return: None
-    '''
     def fill_values(self):
         self.fill_diagonal()
         self.fill_remaining(0, self.box_length)
 
-    '''
-    Removes the appropriate number of cells from the board
-    This is done by setting some values to 0
-    Should be called after the entire solution has been constructed
-    i.e. after fill_values has been called
-    
-    NOTE: Be careful not to 'remove' the same cell multiple times
-    i.e. if a cell is already 0, it cannot be removed again
-
-	Parameters: None
-	Return: None
-    '''
     def remove_cells(self):
-        pass
+        removed = 0
+        while removed < self.removed_cells:
+            row_i = random.randint(0, 8)
+            col_i = random.randint(0, 8)
+            if self.board[row_i][col_i] != 0:
+                self.board[row_i][col_i] = 0
+                removed += 1
 
-'''
-DO NOT CHANGE
-Provided for students
-Given a number of rows and number of cells to remove, this function:
-1. creates a SudokuGenerator
-2. fills its values and saves this as the solved state
-3. removes the appropriate number of cells
-4. returns the representative 2D Python Lists of the board and solution
-
-Parameters:
-size is the number of rows/columns of the board (9 for this project)
-removed is the number of cells to clear (set to 0)
-
-Return: list[list] (a 2D Python list to represent the board)
-'''
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
@@ -210,150 +111,3 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
-
-class Board:
-    def __init__(self, width, height, screen, difficulty):
-        self.width = width
-        self.height = height
-        self.screen = screen
-        self.difficulty = difficulty
-        self.total_rows = 9
-        self.total_columns = 9
-        self.selected_cell_position = None
-
-        self.cells = []
-        for row_index in range(self.total_rows):
-            row_list = []
-            for column_index in range(self.total_columns):
-                row_list.append(None)
-            self.cells.append(row_list)
-
-        self.original_cell_values = []
-        for row_index in range(self.total_rows):
-            row_list = []
-            for column_index in range(self.total_columns):
-                row_list.append(0)
-            self.original_cell_values.append(row_list)
-
-    def draw(self):
-            def draw(self):
-                cell_size = self.width // self.total_columns
-                for line_index in range(self.total_rows + 1):
-                    if line_index % 3 == 0:
-                        line_thickness = 3
-                    else:
-                        line_thickness = 1
-
-                    pygame.draw.line(self.screen, (0, 0, 0),
-                                     (0, line_index * cell_size),
-                                     (self.width, line_index * cell_size),
-                                     line_thickness)
-
-                    pygame.draw.line(self.screen, (0, 0, 0),
-                                     (line_index * cell_size, 0),
-                                     (line_index * cell_size, self.height),
-                                     line_thickness)
-
-            for row_index in range(self.total_rows):
-                for column_index in range(self.total_columns):
-                    if self.cells[row_index][column_index]:
-                        self.cells[row_index][column_index].draw()
-
-        def select(self, row_index, column_index):
-            if 0 <= row_index < self.total_rows and 0 <= column_index < self.total_columns:
-                self.selected_cell_position = (row_index, column_index)
-
-        def click(self, x_position, y_position):
-            cell_size = self.width // self.total_columns
-            if x_position < self.width and y_position < self.height:
-                row_index = y_position // cell_size
-                column_index = x_position // cell_size
-                return (row_index, column_index)
-            return None
-
-        def clear(self):
-            if self.selected_cell_position:
-                row_index, column_index = self.selected_cell_position
-                if self.cells[row_index][column_index]:
-                    self.cells[row_index][column_index].set_cell_value(0)
-                    self.cells[row_index][column_index].set_sketched_value(0)
-
-        def sketch(self, value):
-            if self.selected_cell_position:
-                row_index, column_index = self.selected_cell_position
-                if self.cells[row_index][column_index]:
-                    self.cells[row_index][column_index].set_sketched_value(value)
-
-        def place_number(self, value):
-            if self.selected_cell_position:
-                row_index, column_index = self.selected_cell_position
-                if self.cells[row_index][column_index]:
-                    self.cells[row_index][column_index].set_cell_value(value)
-
-        def reset_to_original(self):
-            for row_index in range(self.total_rows):
-                for column_index in range(self.total_columns):
-                    if self.cells[row_index][column_index]:
-                        self.cells[row_index][column_index].set_cell_value(
-                            self.original_cell_values[row_index][column_index])
-                        self.cells[row_index][column_index].set_sketched_value(0)
-
-    def is_full(self):
-        # Returns a Boolean value indicating whether the board is full or not.
-        #true = board is full, false = board is not full
-        for x in range(0, self.row_length):
-            for y in range(0, self.row_length):
-                if self.board[x][y] == 0:
-                    return False
-
-
-    def update_board(self):
-
-        # Updates the underlying 2D board with the values in all cells.
-        # meant to update the board with the values that are entered (not sketched)?
-        #used when user presses enter button, to make a cell hold the number
-
-
-    def find_empty(self):
-            # Finds an empty cell and returns its row and col as a tuple(x, y).
-            # do I need to continuously find empty cells
-        for x in range(0, self.row_length):
-            for y in range(0, self.row_length):
-                if self.board[x][y] == 0:
-                    return (x, y)  # returning if a tuple
-
-    def check_board(self):
-    #Check whether the Sudoku board is solved correctly.
-
-#Cell (Recommended)
-#This class represents a single cell in the Sudoku board. There are 81 Cells in a Board.
-class Cell:
-    def __init__(self, value, row, col, screen):
-        #Constructor for the Cell class
-        self.value = value
-        self.row = row
-        self.col = col
-        self.screen = screen
-
-    def set_cell_value(self, value):
-        #Setter for this cell’s value
-        # set a cell value = after user presses enter
-        #do i need a way to tell if user presses enter or not? - or in UI
-        self.value = value
-
-    def set_sketched_value(self, value):
-        #Setter for this cell’s sketched value
-        # sketched value = before the user presses enter
-        self.value = value
-
-    def draw(self): #Draws this cell, along with the value inside it.
-        # how to draw cell? -
-        if self.value != 0: # If this cell has a nonzero value, that value is displayed.
-
-        else: # Otherwise, no value is displayed in the cell.
-            pass
-        # The cell is outlined red if it is currently selected.
-
-
-
-
