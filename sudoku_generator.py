@@ -335,7 +335,7 @@ class Cell:
 
     def set_sketched_value(self, value):
         #Setter for this cell’s sketched value
-        #sketched value = before the user presses enter
+        # sketched value = before the user presses enter
         self.value = value
 
     def draw(self): #Draws this cell, along with the value inside it.
