@@ -102,7 +102,7 @@ class SudokuGenerator():
             col_i = random.randint(0, 8)
             if self.board[row_i][col_i] != 0:
                 self.board[row_i][col_i] = 0
-                removed += 1
+                removed += 1#
 
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
