@@ -1,5 +1,5 @@
 import math,random
-
+import pygame
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
@@ -209,3 +209,53 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
+
+#Cell (Recommended)
+#This class represents a single cell in the Sudoku board. There are 81 Cells in a Board.
+class Cell:
+    def __init__(self, value, row, col, screen):
+        #Constructor for the Cell class
+        self.value = value
+        self.row = row
+        self.col = col
+        self.screen = screen
+
+    def set_cell_value(self, value):
+        #Setter for this cell’s value
+        # set a cell value = after user presses enter
+        #do i need a way to tell if user presses enter or not? - or in UI
+        self.value = value
+
+    def set_sketched_value(self, value):
+        #Setter for this cell’s sketched value
+        #sketched value = before the user presses enter
+        self.value = value
+
+    def draw(self): #Draws this cell, along with the value inside it.
+        # how to draw cell? -
+        if self.value != 0: # If this cell has a nonzero value, that value is displayed.
+
+        else: # Otherwise, no value is displayed in the cell.
+            pass
+        # The cell is outlined red if it is currently selected.
+
+
+
+    def is_full(self):
+        #Returns a Boolean value indicating whether the board is full or not.
+
+    def update_board(self):
+           # Updates the underlying 2D board with the values in all cells.
+        # meant to update the board with the values that are entered (not sketched)?
+
+    def find_empty(self):
+            # Finds an empty cell and returns its row and col as a tuple(x, y).
+            #do I need to continuously find empty cells
+        for x in range(0, self.row_length):
+            for y in range(0, self.row_length):
+                if self.board[x][y] == 0:
+                    return (x, y) #returning if a tuple
+
+
+    def check_board(self):
+            #Check whether the Sudoku board is solved correctly.
