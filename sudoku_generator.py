@@ -332,7 +332,7 @@ class Cell:
         #Returns a Boolean value indicating whether the board is full or not.
 
     def update_board(self):
-           # Updates the underlying 2D board with the values in all cells.
+        # Updates the underlying 2D board with the values in all cells.
         # meant to update the board with the values that are entered (not sketched)?
 
     def find_empty(self):
