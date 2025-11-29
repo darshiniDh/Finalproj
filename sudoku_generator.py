@@ -114,7 +114,98 @@ def generate_sudoku(size, removed):
 
 
 
- def is_full(self):
+class Board:
+    def __init__(self, width, height, screen, difficulty):
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+        self.total_rows = 9
+        self.total_columns = 9
+        self.selected_cell_position = None
+
+        self.cells = []
+        for row_index in range(self.total_rows):
+            row_list = []
+            for column_index in range(self.total_columns):
+                row_list.append(None)
+            self.cells.append(row_list)
+
+        self.original_cell_values = []
+        for row_index in range(self.total_rows):
+            row_list = []
+            for column_index in range(self.total_columns):
+                row_list.append(0)
+            self.original_cell_values.append(row_list)
+
+    def draw(self):
+            def draw(self):
+                cell_size = self.width // self.total_columns
+                for line_index in range(self.total_rows + 1):
+                    if line_index % 3 == 0:
+                        line_thickness = 3
+                    else:
+                        line_thickness = 1
+
+                    pygame.draw.line(self.screen, (0, 0, 0),
+                                     (0, line_index * cell_size),
+                                     (self.width, line_index * cell_size),
+                                     line_thickness)
+
+                    pygame.draw.line(self.screen, (0, 0, 0),
+                                     (line_index * cell_size, 0),
+                                     (line_index * cell_size, self.height),
+                                     line_thickness)
+
+            for row_index in range(self.total_rows):
+                for column_index in range(self.total_columns):
+                    if self.cells[row_index][column_index]:
+                        self.cells[row_index][column_index].draw()
+
+        def select(self, row_index, column_index):
+            if 0 <= row_index < self.total_rows and 0 <= column_index < self.total_columns:
+                self.selected_cell_position = (row_index, column_index)
+
+        def click(self, x_position, y_position):
+            cell_size = self.width // self.total_columns
+            if x_position < self.width and y_position < self.height:
+                row_index = y_position // cell_size
+                column_index = x_position // cell_size
+                return (row_index, column_index)
+            return None
+
+        def clear(self):
+            if self.selected_cell_position:
+                row_index, column_index = self.selected_cell_position
+                if self.cells[row_index][column_index]:
+                    self.cells[row_index][column_index].set_cell_value(0)
+                    self.cells[row_index][column_index].set_sketched_value(0)
+
+        def sketch(self, value):
+            if self.selected_cell_position:
+                row_index, column_index = self.selected_cell_position
+                if self.cells[row_index][column_index]:
+                    self.cells[row_index][column_index].set_sketched_value(value)
+
+        def place_number(self, value):
+            if self.selected_cell_position:
+                row_index, column_index = self.selected_cell_position
+                if self.cells[row_index][column_index]:
+                    self.cells[row_index][column_index].set_cell_value(value)
+
+        def reset_to_original(self):
+            for row_index in range(self.total_rows):
+                for column_index in range(self.total_columns):
+                    if self.cells[row_index][column_index]:
+                        self.cells[row_index][column_index].set_cell_value(
+                            self.original_cell_values[row_index][column_index])
+                        self.cells[row_index][column_index].set_sketched_value(0)
+
+
+
+
+
+    def is_full(self):
         #Returns a Boolean value indicating whether the board is full or not.
 
     def update_board(self):
