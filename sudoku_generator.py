@@ -18,8 +18,10 @@ class SudokuGenerator():
                 row.append(0)
             self.board.append(row)
         self.box_length = 3
+
     def get_board(self):
         return self.board
+
     def print_board(self):
         for row in self.board:
             print(row)
@@ -29,11 +31,13 @@ class SudokuGenerator():
             return False
         else:
             return True
+
     def valid_in_col(self, col, num):
         for row in range(self.row_length):
             if self.board[row][col] == num:
                 return False
         return True
+
     def valid_in_box(self, row_start, col_start, num):
         for row in range(row_start,row_start+3):
             for col in range(col_start,col_start+3):
@@ -90,7 +94,6 @@ class SudokuGenerator():
                 self.board[row][col] = 0
         return False
 
-
     def fill_values(self):
         self.fill_diagonal()
         self.fill_remaining(0, self.box_length)
@@ -104,15 +107,13 @@ class SudokuGenerator():
                 self.board[row_i][col_i] = 0
                 removed += 1#
 
-def generate_sudoku(size, removed):
-    sudoku = SudokuGenerator(size, removed)
-    sudoku.fill_values()
-    board = sudoku.get_board()
-    sudoku.remove_cells()
-    board = sudoku.get_board()
-    return board
-
-
+    def generate_sudoku(size, removed):
+        sudoku = SudokuGenerator(size, removed)
+        sudoku.fill_values()
+        board = sudoku.get_board()
+        sudoku.remove_cells()
+        board = sudoku.get_board()
+        return board
 
 class Board:
     def __init__(self, width, height, screen, difficulty):
@@ -200,29 +201,47 @@ class Board:
                         self.original_cell_values[row_index][column_index])
                     self.cells[row_index][column_index].set_sketched_value(0)
 
-
     def is_full(self):
-        #Returns a Boolean value indicating whether the board is full or not.
+        for row_index in range(self.total_rows):
+            for column_index in range(self.total_columns):
+                if self.cells[row_index][column_index] and self.cells[row_index][column_index].get_cell_value() == 0:
+                    return False
+        return True
 
     def update_board(self):
-           # Updates the underlying 2D board with the values in all cells.
-        # meant to update the board with the values that are entered (not sketched)?
+        for row_index in range(self.total_rows):
+            for column_index in range(self.total_columns):
+                if self.cells[row_index][column_index]:
+                    self.original_cell_values[row_index][column_index] = self
 
     def find_empty(self):
-            # Finds an empty cell and returns its row and col as a tuple(x, y).
-            #do I need to continuously find empty cells
-        for x in range(0, self.row_length):
-            for y in range(0, self.row_length):
-                if self.board[x][y] == 0:
-                    return (x, y) #returning if a tuple
+        for row_index in range(self.total_rows):
+            for column_index in range(self.total_columns):
+                if self.cells[row_index][column_index] and self.cells[row_index][column_index].get_cell_value() == 0:
+                    return (row_index, column_index)
+        return None
 
 
     def check_board(self):
-            #Check whether the Sudoku board is solved correctly.
+        # Check rows
+        for row_index in range(self.total_rows):
+            seen = set()
+            for column_index in range(self.total_columns):
+                value = self.cells[row_index][column_index].get_cell_value()
+                if value == 0 or value in seen:
+                    return False
+                seen.add(value)
 
+        # Check columns
+        for column_index in range(self.total_columns):
+            seen = set()
+            for row_index in range(self.total_rows):
+                value = self.cells[row_index][column_index].get_cell_value()
+                if value == 0 or value in seen:
+                    return False
+                seen.add(value)
 
-
-
+        return True
 
 
 class Cell:
