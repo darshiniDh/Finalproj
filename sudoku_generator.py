@@ -115,6 +115,8 @@ class SudokuGenerator():
         board = sudoku.get_board()
         return board
 
+
+
 class Board:
     def __init__(self, width, height, screen, difficulty):
         self.width = width
@@ -235,18 +237,37 @@ class Cell:
         self.row = row
         self.col = col
         self.screen = screen
+        self.sketched_value = 0
+        self.selected = False
 
     def set_cell_value(self, value):
         #Setter for this cell’s value
         # set a cell value = after user presses enter
         #do i need a way to tell if user presses enter or not? - or in UI
+
         self.value = value
 
     def set_sketched_value(self, value):
         #Setter for this cell’s sketched value
-        #sketched value = before the user presses enter
-        self.value = value
+        #make a sketched value vari. and assign sketched value
+        self.sketched_value = value
+
+
 
     def draw(self): #Draws this cell, along with the value inside it.
-        # how to draw cell? -
+        #anything draw is pygame
+        # how to draw cell? - draw cell when user clicks the enter button
+        red = (255, 0, 0) #selected cell is the red color
+        green = (0, 255, 0) #placeholder cell color
+        r = pygame.Rect(self.col, self.row, 640/81, 512/81) #use numbers for width and height
         if self.value != 0: # If this cell has a nonzero value, that value is displayed.
+            pygame.draw.rect(self.screen, green, r)#rect. draw number
+
+        elif self.sketched_value != 0: #user sketched an actual value
+            pygame.draw.rect(self.screen, green, r)
+        elif self.value == 0: #then just draw the cell
+            pygame.draw.rect(self.screen, green, r)
+
+        # if self.selected:
+        #     pygame.draw.rect()
+
