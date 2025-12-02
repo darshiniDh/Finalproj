@@ -221,28 +221,12 @@ class Board:
                     return (row_index, column_index)
         return None
 
-
     def check_board(self):
-        # Check rows
         for row_index in range(self.total_rows):
-            seen = set()
             for column_index in range(self.total_columns):
-                value = self.cells[row_index][column_index].get_cell_value()
-                if value == 0 or value in seen:
+                if self.cells[row_index][column_index].value != self.solution[row_index][column_index]:
                     return False
-                seen.add(value)
-
-        # Check columns
-        for column_index in range(self.total_columns):
-            seen = set()
-            for row_index in range(self.total_rows):
-                value = self.cells[row_index][column_index].get_cell_value()
-                if value == 0 or value in seen:
-                    return False
-                seen.add(value)
-
         return True
-
 
 class Cell:
     def __init__(self, value, row, col, screen):
