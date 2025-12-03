@@ -91,6 +91,12 @@ def main():
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Sudoku")
 
+
+        #image for background
+
+        back_image = pygame.image.load("wp8100958.jpg")
+        screen.blit(back_image, (0,0))
+
         game = "beg"
         board = None
         diff = None
@@ -190,6 +196,7 @@ def main():
                 text_select_rect.center = (640 // 2, 512 // 2)
 
                 screen.fill(white)
+                screen.blit(back_image, (0, 0))
                 screen.blit(text_welcome, text_rect)
                 screen.blit(text_select, text_select_rect)
 
@@ -211,6 +218,7 @@ def main():
                     if result == "restart":
                         game = "beg"
                         board = None
+
 
             pygame.display.flip()
     finally:
