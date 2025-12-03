@@ -1,9 +1,12 @@
-# Main function
 import pygame
 import math
 import random
 from sudoku_generator import SudokuGenerator, Cell, Board
-def draw_screen(screen,board):
+
+WIDTH, HEIGHT = 640, 640
+
+
+def draw_screen(screen, board):
     screen.fill((255, 255, 255))
     board.draw()
     button_font = pygame.font.SysFont('Arial', 24)
@@ -21,7 +24,8 @@ def draw_screen(screen,board):
         screen.blit(button_text, button_text_rect)
     return reset_button, restart_button, exit_button
 
-def initial_board(screen,diff):
+
+def initial_board(screen, diff):
     if diff == "easy":
         removed_cells = 30
     elif diff == "medium":
@@ -34,7 +38,7 @@ def initial_board(screen,diff):
     sudoku_gener.remove_cells()
     sudoku_board = sudoku_gener.get_board()
 
-    board = Board(512, 512, screen, diff)
+    board = Board(WIDTH, HEIGHT, screen, diff)
     board.solution = solution
 
     for row in range(9):
@@ -45,10 +49,46 @@ def initial_board(screen,diff):
             board.original_cell_values[row][col] = cell_value
 
     return board
+
+
+def show_end_screen(screen, won=True):
+    screen.fill((255, 255, 255))
+    font = pygame.font.SysFont('Arial', 48)
+    message = "Game Won!" if won else "Game Over :("
+    color = (0, 200, 0) if won else (200, 0, 0)
+    text = font.render(message, True, color)
+    text_rect = text.get_rect(center=(320, 200))
+    screen.blit(text, text_rect)
+
+    button_font = pygame.font.SysFont('Arial', 32)
+    restart_button = pygame.Rect(180, 300, 120, 50)
+    exit_button = pygame.Rect(340, 300, 120, 50)
+
+    for button, text in [(restart_button, "Restart"), (exit_button, "Exit")]:
+        pygame.draw.rect(screen, (100, 150, 200), button)
+        pygame.draw.rect(screen, (0, 0, 0), button, 2)
+        button_text = button_font.render(text, True, (0, 0, 0))
+        button_text_rect = button_text.get_rect(center=button.center)
+        screen.blit(button_text, button_text_rect)
+
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = event.pos
+                if restart_button.collidepoint(pos):
+                    return "restart"
+                elif exit_button.collidepoint(pos):
+                    return None
+
+
 def main():
     try:
         pygame.init()
-        screen = pygame.display.set_mode((640, 640))
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Sudoku")
 
         game = "beg"
@@ -78,14 +118,16 @@ def main():
              button_width,
              button_height)
         )
+
         running = True
+        reset_button = restart_button = exit_button = None
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos
-
                     if game == "beg":
                         if easy_button.collidepoint(mouse_pos):
                             diff = "easy"
@@ -99,21 +141,39 @@ def main():
                             diff = "hard"
                             board = initial_board(screen, diff)
                             game = "playing"
-
                     elif game == "playing":
-                        if reset_button.collidepoint(mouse_pos):
+                        if reset_button and reset_button.collidepoint(mouse_pos):
                             board.reset_to_original()
-                        elif restart_button.collidepoint(mouse_pos):
+                        elif restart_button and restart_button.collidepoint(mouse_pos):
                             game = "beg"
                             board = None
-                        elif exit_button.collidepoint(mouse_pos):
+                        elif exit_button and exit_button.collidepoint(mouse_pos):
                             running = False
                         else:
                             clicked = board.click(mouse_pos[0], mouse_pos[1])
                             if clicked:
                                 board.select(clicked[0], clicked[1])
-            if game == "beg":
+                if event.type == pygame.KEYDOWN and game == "playing":
+                    if board.selected_cell_position:
+                        r, c = board.selected_cell_position
+                        if event.key == pygame.K_LEFT:
+                            board.select(r, max(0, c - 1))
+                        elif event.key == pygame.K_RIGHT:
+                            board.select(r, min(8, c + 1))
+                        elif event.key == pygame.K_UP:
+                            board.select(max(0, r - 1), c)
+                        elif event.key == pygame.K_DOWN:
+                            board.select(min(8, r + 1), c)
+                        elif pygame.K_1 <= event.key <= pygame.K_9:
+                            board.sketch(event.key - pygame.K_0)
+                        elif event.key == pygame.K_RETURN:
+                            cell = board.cells[r][c]
+                            if cell.sketched_value != 0:
+                                board.place_number(cell.sketched_value)
+                        elif event.key in [pygame.K_BACKSPACE, pygame.K_DELETE]:
+                            board.clear()
 
+            if game == "beg":
                 white = (255, 255, 255)
                 black = (0, 0, 0)
                 button_color = (100, 150, 200)
@@ -125,7 +185,7 @@ def main():
                 text_rect = text_welcome.get_rect()
                 text_rect.center = (640 // 2, 512 // 4)
 
-                text_select = font.render("Select Game Mode", True, black)
+                text_select = font.render("Select Game Mode:", True, black)
                 text_select_rect = text_select.get_rect()
                 text_select_rect.center = (640 // 2, 512 // 2)
 
@@ -133,25 +193,26 @@ def main():
                 screen.blit(text_welcome, text_rect)
                 screen.blit(text_select, text_select_rect)
 
-                mouse_pos = pygame.mouse.get_pos()
-
                 for button, text in [(easy_button, "Easy"),
                                      (medium_button, "Medium"),
                                      (hard_button, "Hard")]:
-                    color = button_color
-                    pygame.draw.rect(screen, color, button)
-                    pygame.draw.rect(screen, black, button, 2)  # Border
-
+                    pygame.draw.rect(screen, button_color, button)
+                    pygame.draw.rect(screen, black, button, 2)
                     button_text = button_font.render(text, True, black)
                     button_text_rect = button_text.get_rect(center=button.center)
                     screen.blit(button_text, button_text_rect)
             elif game == "playing":
                 reset_button, restart_button, exit_button = draw_screen(screen, board)
+                if board.is_full():
+                    if board.check_board():
+                        result = show_end_screen(screen, won=True)
+                    else:
+                        result = show_end_screen(screen, won=False)
+                    if result == "restart":
+                        game = "beg"
+                        board = None
+
             pygame.display.flip()
-
-
-
-
     finally:
         pygame.quit()
 
