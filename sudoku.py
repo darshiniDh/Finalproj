@@ -55,6 +55,8 @@ def show_end_screen(screen, win=True):
     white = (255, 255, 255)
     black = (0, 0, 0)
     screen.fill((255, 255, 255))
+    back_image = pygame.image.load("wp8100958.jpg")
+    screen.blit(back_image, (0, 0))
     font = pygame.font.SysFont('Arial', 48)
     message = "Game Won!" if win else "Game Over :("
     color = black
@@ -221,13 +223,14 @@ def main():
                 reset_button, restart_button, exit_button = draw_screen(screen, board)
                 if board.is_full():
                     if board.check_board():
-                        result = show_end_screen(screen, won=True)
+                        result = show_end_screen(screen, win=True)
                     else:
-                        result = show_end_screen(screen, won=False)
+                        result = show_end_screen(screen, win=False)
                     if result == "restart":
                         game = "beg"
                         board = None
                 board_complete = Board(660, 660, screen, diff)
+
 
             pygame.display.flip()
 
