@@ -4,6 +4,8 @@ import pygame
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
 
+Resources used: https://www.pygame.org/docs/ref/rect.html, GeeksforGeeks pygame functions documentation
+
 """
 
 class SudokuGenerator():
@@ -151,6 +153,54 @@ class Cell:
             text = font.render(str(self.sketched_value), True, (128, 128, 128))
             self.screen.blit(text, (x + 5, y + 5))
 
+class Cell:
+    def __init__(self, value, row, col, screen):
+        #Constructor for the Cell class
+        self.value = value
+        self.sketched_value = 0
+        self.row = row
+        self.col = col
+        self.screen = screen
+        self.sketched_value = 0
+        self.selected = False
+
+    def set_cell_value(self, value):
+        #Setter for this cell’s value
+        # set a cell value = after user presses enter
+        #do i need a way to tell if user presses enter or not? - or in UI
+
+        self.value = value
+
+    def set_sketched_value(self, value):
+        #Setter for this cell’s sketched value
+        #make a sketched value vari. and assign sketched value
+        self.sketched_value = value
+    def get_cell_value(self):
+        return self.value
+
+
+    def draw(self): #Draws this cell, along with the value inside it.
+        #anything draw is pygame
+        # how to draw cell? - draw cell when user clicks the enter button
+        cell_size = 512 // 9
+        x = self.col * cell_size
+        y = self.row * cell_size
+        if self.value != 0: # If this cell has a nonzero value, that value is displayed.
+            font = pygame.font.SysFont('Arial', 40)
+            text = font.render(str(self.value), True, (0, 0, 0))
+            text_rect = text.get_rect(center=(x + cell_size // 2, y + cell_size // 2))
+            self.screen.blit(text, text_rect)
+
+        elif self.sketched_value != 0: #user sketched an actual value
+            font = pygame.font.SysFont('Arial', 20)
+            text = font.render(str(self.sketched_value), True, (128, 128, 128))
+            text_rect = text.get_rect(topleft=(x + 5, y + 5))
+            self.screen.blit(text, text_rect)
+
+
+
+
+
 class Board:
     def __init__(self, width, height, screen, difficulty):
         self.width = width
@@ -283,3 +333,5 @@ class Board:
                 if self.cells[row_index][column_index].value != self.solution[row_index][column_index]:
                     return False
         return True
+
+
