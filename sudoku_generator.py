@@ -236,8 +236,9 @@ class Board:
         if self.selected_cell_position:
             row_index, column_index = self.selected_cell_position
             if self.cells[row_index][column_index]:
-                self.cells[row_index][column_index].set_cell_value(0)
-                self.cells[row_index][column_index].set_sketched_value(0)
+                if self.original_cell_values[row_index][column_index] == 0:
+                    self.cells[row_index][column_index].set_cell_value(0)
+                    self.cells[row_index][column_index].set_sketched_value(0)
 
     def sketch(self, value):
         if self.selected_cell_position:
@@ -249,7 +250,8 @@ class Board:
         if self.selected_cell_position:
             row_index, column_index = self.selected_cell_position
             if self.cells[row_index][column_index]:
-                self.cells[row_index][column_index].set_cell_value(value)
+                if self.original_cell_values[row_index][column_index] == 0:
+                    self.cells[row_index][column_index].set_cell_value(value)
 
     def reset_to_original(self):
         for row_index in range(self.total_rows):
