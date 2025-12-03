@@ -10,7 +10,7 @@ def draw_screen(screen, board):
     screen.fill((255, 255, 255))
     board.draw()
     button_font = pygame.font.SysFont('Arial', 24)
-    button_y = 512 + 20
+    button_y = 600 + 20
     reset_button = pygame.Rect(50, button_y, 100, 40)
     restart_button = pygame.Rect(270, button_y, 100, 40)
     exit_button = pygame.Rect(490, button_y, 100, 40)
@@ -38,7 +38,7 @@ def initial_board(screen, diff):
     sudoku_gener.remove_cells()
     sudoku_board = sudoku_gener.get_board()
 
-    board = Board(WIDTH, HEIGHT, screen, diff)
+    board = Board(600, 600, screen, diff)
     board.solution = solution
 
     for row in range(9):
