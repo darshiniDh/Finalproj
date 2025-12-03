@@ -269,10 +269,11 @@ class Board:
         return True
 
     def update_board(self):
-        for row_index in range(self.total_rows):
-            for column_index in range(self.total_columns):
-                if self.cells[row_index][column_index]:
-                    self.original_cell_values[row_index][column_index] = self.cells[row_index][column_index].get_cell_value()
+        self.current_values = [
+            [self.cells[row_index][column_index].get_cell_value()
+             for column_index in range(self.total_columns)]
+            for row_index in range(self.total_rows)
+        ]
 
     def find_empty(self):
         for row_index in range(self.total_rows):
@@ -284,7 +285,7 @@ class Board:
     def check_board(self):
         for row_index in range(self.total_rows):
             for column_index in range(self.total_columns):
-                if self.cells[row_index][column_index].value != self.solution[row_index][column_index]:
+                if self.cells[row_index][column_index].get_cell_value() != self.solution[row_index][column_index]:
                     return False
         return True
 
