@@ -104,17 +104,52 @@ class SudokuGenerator():
             col_i = random.randint(0, 8)
             if self.board[row_i][col_i] != 0:
                 self.board[row_i][col_i] = 0
-                removed += 1#
+                removed += 1
 
-    def generate_sudoku(size, removed):
-        sudoku = SudokuGenerator(size, removed)
-        sudoku.fill_values()
-        board = sudoku.get_board()
-        sudoku.remove_cells()
-        board = sudoku.get_board()
-        return board
+def generate_sudoku(size, removed):
+    sudoku = SudokuGenerator(size, removed)
+    sudoku.fill_values()
+    solution = []
+    for row in sudoku.get_board():
+        solution.append(row[:])
+    sudoku.remove_cells()
+    puzzle = sudoku.get_board()
+    return puzzle, solution
 
+class Cell:
+    def __init__(self, value, row, col, screen):
+        self.value = value
+        self.sketched_value = 0
+        self.row = row
+        self.col = col
+        self.screen = screen
+        self.selected = False
 
+    def set_cell_value(self, value):
+        self.value = value
+
+    def set_sketched_value(self, value):
+        self.sketched_value = value
+
+    def get_cell_value(self):
+        return self.value
+
+    def draw(self, board_width, total_columns):
+        cell_size = board_width // total_columns
+        x = self.col * cell_size
+        y = self.row * cell_size
+        rect = pygame.Rect(x, y, cell_size, cell_size)
+        pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
+        if self.selected:
+            pygame.draw.rect(self.screen, (220, 20, 60), rect, 3)
+        if self.value != 0:
+            font = pygame.font.SysFont('Arial', cell_size // 2)
+            text = font.render(str(self.value), True, (0, 0, 0))
+            self.screen.blit(text, text.get_rect(center=rect.center))
+        elif self.sketched_value != 0:
+            font = pygame.font.SysFont('Arial', cell_size // 3)
+            text = font.render(str(self.sketched_value), True, (128, 128, 128))
+            self.screen.blit(text, (x + 5, y + 5))
 
 class Board:
     def __init__(self, width, height, screen, difficulty):
@@ -140,6 +175,22 @@ class Board:
                 row_list.append(0)
             self.original_cell_values.append(row_list)
 
+        removed_map = {"easy": 30, "medium": 40, "hard": 50}
+        if difficulty in removed_map:
+            removed = removed_map[difficulty]
+        else:
+            removed = 40
+
+        puzzle, solution = generate_sudoku(9, removed)
+        self.solution = solution
+
+        for r in range(self.total_rows):
+            for c in range(self.total_columns):
+                val = puzzle[r][c]
+                cell = Cell(val, r, c, screen)
+                self.cells[r][c] = cell
+                self.original_cell_values[r][c] = val
+
     def draw(self):
         cell_size = self.width // self.total_columns
         for line_index in range(self.total_rows + 1):
@@ -161,11 +212,15 @@ class Board:
         for row_index in range(self.total_rows):
             for column_index in range(self.total_columns):
                 if self.cells[row_index][column_index]:
-                    self.cells[row_index][column_index].draw()
+                    self.cells[row_index][column_index].draw(self.width, self.total_columns)
 
     def select(self, row_index, column_index):
         if 0 <= row_index < self.total_rows and 0 <= column_index < self.total_columns:
+            if self.selected_cell_position:
+                r, c = self.selected_cell_position
+                self.cells[r][c].selected = False
             self.selected_cell_position = (row_index, column_index)
+            self.cells[row_index][column_index].selected = True
 
     def click(self, x_position, y_position):
         cell_size = self.width // self.total_columns
@@ -213,7 +268,7 @@ class Board:
         for row_index in range(self.total_rows):
             for column_index in range(self.total_columns):
                 if self.cells[row_index][column_index]:
-                    self.original_cell_values[row_index][column_index] = self
+                    self.original_cell_values[row_index][column_index] = self.cells[row_index][column_index].get_cell_value()
 
     def find_empty(self):
         for row_index in range(self.total_rows):
@@ -228,47 +283,3 @@ class Board:
                 if self.cells[row_index][column_index].value != self.solution[row_index][column_index]:
                     return False
         return True
-
-class Cell:
-    def __init__(self, value, row, col, screen):
-        #Constructor for the Cell class
-        self.value = value
-        self.sketched_value = 0
-        self.row = row
-        self.col = col
-        self.screen = screen
-        self.sketched_value = 0
-        self.selected = False
-
-    def set_cell_value(self, value):
-        #Setter for this cell’s value
-        # set a cell value = after user presses enter
-        #do i need a way to tell if user presses enter or not? - or in UI
-
-        self.value = value
-
-    def set_sketched_value(self, value):
-        #Setter for this cell’s sketched value
-        #make a sketched value vari. and assign sketched value
-        self.sketched_value = value
-    def get_cell_value(self):
-        return self.value
-
-
-    def draw(self): #Draws this cell, along with the value inside it.
-        #anything draw is pygame
-        # how to draw cell? - draw cell when user clicks the enter button
-        cell_size = 512 // 9
-        x = self.col * cell_size
-        y = self.row * cell_size
-        if self.value != 0: # If this cell has a nonzero value, that value is displayed.
-            font = pygame.font.SysFont('Arial', 40)
-            text = font.render(str(self.value), True, (0, 0, 0))
-            text_rect = text.get_rect(center=(x + cell_size // 2, y + cell_size // 2))
-            self.screen.blit(text, text_rect)
-
-        elif self.sketched_value != 0: #user sketched an actual value
-            font = pygame.font.SysFont('Arial', 20)
-            text = font.render(str(self.sketched_value), True, (128, 128, 128))
-            text_rect = text.get_rect(topleft=(x + 5, y + 5))
-            self.screen.blit(text, text_rect)
