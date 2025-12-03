@@ -51,25 +51,35 @@ def initial_board(screen, diff):
     return board
 
 
-def show_end_screen(screen, won=True):
+def show_end_screen(screen, win=True):
+    white = (255, 255, 255)
+    black = (0, 0, 0)
     screen.fill((255, 255, 255))
     font = pygame.font.SysFont('Arial', 48)
-    message = "Game Won!" if won else "Game Over :("
-    color = (0, 200, 0) if won else (200, 0, 0)
-    text = font.render(message, True, color)
-    text_rect = text.get_rect(center=(320, 200))
+    message = "Game Won!" if win else "Game Over :("
+    color = black
+    text = font.render(message, True, black)
+    text_rect = text.get_rect(center=(330, 330))
     screen.blit(text, text_rect)
 
     button_font = pygame.font.SysFont('Arial', 32)
-    restart_button = pygame.Rect(180, 300, 120, 50)
-    exit_button = pygame.Rect(340, 300, 120, 50)
+    restart_button = pygame.Rect(280, 400, 120, 50)
+    exit_button = pygame.Rect(280, 400, 120, 50)
 
-    for button, text in [(restart_button, "Restart"), (exit_button, "Exit")]:
-        pygame.draw.rect(screen, (100, 150, 200), button)
-        pygame.draw.rect(screen, (0, 0, 0), button, 2)
-        button_text = button_font.render(text, True, (0, 0, 0))
-        button_text_rect = button_text.get_rect(center=button.center)
-        screen.blit(button_text, button_text_rect)
+    if win:
+        for button, text in [(exit_button, "Exit")]:
+            pygame.draw.rect(screen, black, button)
+            pygame.draw.rect(screen, black, button, 2)
+            button_text = button_font.render(text, True, white)
+            button_text_rect = button_text.get_rect(center=button.center)
+            screen.blit(button_text, button_text_rect)
+    else:
+        for button, text in [(restart_button, "Restart")]:
+            pygame.draw.rect(screen, black, button)
+            pygame.draw.rect(screen, black, button, 2)
+            button_text = button_font.render(text, True, white)
+            button_text_rect = button_text.get_rect(center=button.center)
+            screen.blit(button_text, button_text_rect)
 
     pygame.display.flip()
 
@@ -91,13 +101,12 @@ def main():
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Sudoku")
 
-
-        #image for background
+        # image for background
 
         back_image = pygame.image.load("wp8100958.jpg")
-        screen.blit(back_image, (0,0))
+        screen.blit(back_image, (0, 0))
 
-        game = "beg" #
+        game = "beg"  #
         board = None
         diff = None
 
@@ -218,37 +227,7 @@ def main():
                     if result == "restart":
                         game = "beg"
                         board = None
-                board_complete = Board(660,660,screen, diff)
-
-                if board_complete.find_empty() == None:
-                    win = board_complete.check_board()
-                    if win == False:
-                        white = (255, 255, 255)
-                        black = (0, 0, 0)
-
-                        font = pygame.font.SysFont('Arial', 48)
-                        button_font = pygame.font.SysFont('Arial', 32)
-
-                        text_lose = font.render("Game Over :(", True, black)
-                        text_rect_lose = text_lose.get_rect()
-                        text_rect_lose.center = (640 // 2, 512 // 4)
-
-                        screen.fill(white)
-                        screen.blit(text_lose, text_rect_lose)
-
-                    elif win == True:
-                        white = (255, 255, 255)
-                        black = (0, 0, 0)
-
-                        font = pygame.font.SysFont('Arial', 48)
-                        button_font = pygame.font.SysFont('Arial', 32)
-
-                        text_win = font.render("Game Won!", True, black)
-                        text_rect_win = text_win.get_rect()
-                        text_rect_win.center = (640 // 2, 512 // 4)
-
-                        screen.fill(white)
-                        screen.blit(text_win, text_rect_win)
+                board_complete = Board(660, 660, screen, diff)
 
             pygame.display.flip()
 
