@@ -3,7 +3,7 @@ import math
 import random
 from sudoku_generator import SudokuGenerator, Cell, Board
 
-WIDTH, HEIGHT = 640, 640
+WIDTH, HEIGHT = 660, 660
 
 
 def draw_screen(screen, board):
