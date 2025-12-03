@@ -211,8 +211,39 @@ def main():
                     if result == "restart":
                         game = "beg"
                         board = None
+                board_complete = Board(660,660,screen, diff)
 
+                if board_complete.find_empty() == None:
+                    win = board_complete.check_board()
+                    if win == False:
+                        white = (255, 255, 255)
+                        black = (0, 0, 0)
+
+                        font = pygame.font.SysFont('Arial', 48)
+                        button_font = pygame.font.SysFont('Arial', 32)
+
+                        text_lose = font.render("Game Over :(", True, black)
+                        text_rect_lose = text_lose.get_rect()
+                        text_rect_lose.center = (640 // 2, 512 // 4)
+
+                        screen.fill(white)
+                        screen.blit(text_lose, text_rect_lose)
+
+                    elif win == True:
+                        white = (255, 255, 255)
+                        black = (0, 0, 0)
+
+                        font = pygame.font.SysFont('Arial', 48)
+                        button_font = pygame.font.SysFont('Arial', 32)
+
+                        text_win = font.render("Game Won!", True, black)
+                        text_rect_win = text_win.get_rect()
+                        text_rect_win.center = (640 // 2, 512 // 4)
+
+                        screen.fill(white)
+                        screen.blit(text_win, text_rect_win)
             pygame.display.flip()
+
     finally:
         pygame.quit()
 
