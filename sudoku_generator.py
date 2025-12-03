@@ -4,6 +4,8 @@ import pygame
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
 
+Resources used: https://www.pygame.org/docs/ref/rect.html, GeeksforGeeks pygame functions documentation
+
 """
 
 class SudokuGenerator():
@@ -283,3 +285,5 @@ class Board:
                 if self.cells[row_index][column_index].value != self.solution[row_index][column_index]:
                     return False
         return True
+
+
