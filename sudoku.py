@@ -97,7 +97,7 @@ def main():
         back_image = pygame.image.load("wp8100958.jpg")
         screen.blit(back_image, (0,0))
 
-        game = "beg"
+        game = "beg" #
         board = None
         diff = None
 
